@@ -17,7 +17,7 @@ import "./App.css";
 
 function App() {
   const { user } = useTypedSelector((state) => state.user);
-  const { setUser, setUsers } = useActions();
+  const { setUser, setUsersList } = useActions();
 
   const handleSignInWithGoogle = () => {
     signInWithPopup(auth, provider)
@@ -51,14 +51,14 @@ function App() {
             }
           });
 
-          setUsers(users);
+          setUsersList(users);
         },
         (error) => {
           alert(error);
         }
       );
     }
-  }, [setUsers, user]);
+  }, [setUsersList, user]);
 
   return (
     <BrowserRouter>

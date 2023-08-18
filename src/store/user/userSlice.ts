@@ -19,7 +19,7 @@ export const userSlice = createSlice({
       state.user = {} as IUser;
       state.usersList = [] as IUser[];
     },
-    setUsers(state, action) {
+    setUsersList(state, action) {
       state.usersList = action.payload;
     },
   },
