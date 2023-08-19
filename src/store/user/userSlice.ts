@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IUser, InitialUserState } from "../../types/InitialUserState";
+import { RootState } from "../store";
 
 const user = localStorage.getItem("user");
 
@@ -24,5 +25,8 @@ export const userSlice = createSlice({
     },
   },
 });
+
+export const selectLoggedInUser = (state: RootState) =>
+  state.userInfo.user;
 
 export const { actions, reducer } = userSlice;

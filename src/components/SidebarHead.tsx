@@ -3,9 +3,10 @@ import noAvatar from "../assets/no-avatar.png";
 import { useActions } from "../hooks/useActions";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
+import { selectLoggedInUser } from "../store/user/userSlice";
 
 const SidebarHead = () => {
-  const { user } = useTypedSelector((state) => state.user);
+  const user = useTypedSelector(selectLoggedInUser);
   const { removeUser } = useActions();
 
   const handleSignOut = () => {

@@ -14,9 +14,10 @@ import {
   setDoc,
 } from "firebase/firestore";
 import "./App.css";
+import { selectLoggedInUser } from "./store/user/userSlice";
 
 function App() {
-  const { user } = useTypedSelector((state) => state.user);
+  const user = useTypedSelector(selectLoggedInUser);
   const { setUser, setUsersList } = useActions();
 
   const handleSignInWithGoogle = () => {

@@ -11,47 +11,62 @@ import SidebarHead from "./SidebarHead";
 import SidebarInput from "./SidebarInput";
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
+import ChattingWithUser from "./ChattingWithUser";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 
 const Sidebar = () => {
-  const [users, setusers] = useState<IUser[]>([]);
-  const user = useTypedSelector((state) => state.user.user);
-
-  // console.log(users);
+  const [chattingUsersList, setChattingUsersList] = useState<IUser[]>([]);
+  const [shouldClearInput, setshouldClearInput] = useState(false);
+  const user = useTypedSelector((state) => state.userInfo.user);
 
   const addUserToChattingList = async (chattingWithUser: IUser) => {
-    setusers((users) => [user, ...users]);
     const roomsRef = collection(db, "rooms");
-    const q1 = query(
-      roomsRef,
-      where("me.email", "==", user.email),
-      where("chattingWithUser.email", "==", chattingWithUser.email)
-    );
+    const q1 = query(roomsRef, where("id", "==", chattingWithUser.id));
     const doesUserExist = await getDocs(q1);
 
-    if (doesUserExist.docs.length === 0)
+    if (doesUserExist.docs.length === 0) {
+      setshouldClearInput(true);
       await addDoc(collection(db, "rooms"), {
-        me: user,
-        chattingWithUser,
+        id: chattingWithUser.id,
+        name: chattingWithUser.name,
+        photo: chattingWithUser.photo,
+        email: chattingWithUser.email,
+        myAccountId: user.id,
       });
+      setshouldClearInput(false);
+    }
   };
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "rooms"), (data) => {
-      const listOfChattingUsers = [];
-      data.docs.forEach((doc) => {
-        listOfChattingUsers.push(doc.data());
-      });
-      setusers(listOfChattingUsers);
+      const listOfChattingUsers = [] as IUser[];
+
+      if (data.docs[0]?.data().myAccountId === user.id) {
+        data.docs.forEach((doc) => {
+          listOfChattingUsers.push(doc.data() as IUser);
+        });
+      }
+      console.log(listOfChattingUsers);
+      
+      setChattingUsersList(listOfChattingUsers.reverse());
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user.id]);
 
   return (
-    <div className="bg-indigo-700 rounded-tl-lg rounded-bl-lg  w-4/12 ">
+    <div className="bg-indigo-800 rounded-tl-lg rounded-bl-lg  w-4/12 overflow-auto">
       <SidebarHead />
-      <SidebarInput addUserToChattingList={addUserToChattingList} />
+      <SidebarInput
+        addUserToChattingList={addUserToChattingList}
+        shouldClearInput={shouldClearInput}
+      />
+      {chattingUsersList.map((chattingWithUser) => (
+        <ChattingWithUser
+          key={chattingWithUser.id}
+          chattingWithUser={chattingWithUser}
+        />
+      ))}
     </div>
   );
 };
