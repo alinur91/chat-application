@@ -1,11 +1,4 @@
-import {
-  addDoc,
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { IUser } from "../types/InitialUserState";
 import SidebarHead from "./SidebarHead";
 import SidebarInput from "./SidebarInput";
@@ -20,39 +13,51 @@ const Sidebar = () => {
   const user = useTypedSelector((state) => state.userInfo.user);
 
   const addUserToChattingList = async (chattingWithUser: IUser) => {
-    const roomsRef = collection(db, "rooms");
-    const q1 = query(roomsRef, where("id", "==", chattingWithUser.id));
-    const doesUserExist = await getDocs(q1);
+    setshouldClearInput(true);
+    const userRef = doc(
+      db,
+      "users",
+      user.email!,
+      "chattingUsersList",
+      chattingWithUser.email
+    );
+    await setDoc(userRef, chattingWithUser, { merge: false });
+    setshouldClearInput(false);
 
-    if (doesUserExist.docs.length === 0) {
-      setshouldClearInput(true);
-      await addDoc(collection(db, "rooms"), {
-        id: chattingWithUser.id,
-        name: chattingWithUser.name,
-        photo: chattingWithUser.photo,
-        email: chattingWithUser.email,
-        myAccountId: user.id,
-      });
-      setshouldClearInput(false);
-    }
+    // const roomsRef = collection(db, "rooms");
+    // const q1 = query(roomsRef, where("id", "==", chattingWithUser.id));
+    // const doesUserExist = await getDocs(q1);
+
+    // if (doesUserExist.docs.length === 0) {
+    //   setshouldClearInput(true);
+    //   await addDoc(collection(db, "rooms"), {
+    //     id: chattingWithUser.id,
+    //     name: chattingWithUser.name,
+    //     photo: chattingWithUser.photo,
+    //     email: chattingWithUser.email,
+    //     myAccountId: user.id,
+    //   });
+    //   setshouldClearInput(false);
+    // }
   };
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "rooms"), (data) => {
-      const listOfChattingUsers = [] as IUser[];
+    const unsubscribe = onSnapshot(
+      collection(db, "users", user.email, "chattingUsersList"),
+      (data) => {
+        const listOfChattingUsers = [] as IUser[];
 
-      if (data.docs[0]?.data().myAccountId === user.id) {
         data.docs.forEach((doc) => {
           listOfChattingUsers.push(doc.data() as IUser);
         });
+        console.log(listOfChattingUsers);
+
+        setChattingUsersList(listOfChattingUsers.reverse());
       }
-      console.log(listOfChattingUsers);
-      
-      setChattingUsersList(listOfChattingUsers.reverse());
-    });
+    );
 
     return () => unsubscribe();
-  }, [user.id]);
+  }, [user.email, user.id]);
 
   return (
     <div className="bg-indigo-800 rounded-tl-lg rounded-bl-lg  w-4/12 overflow-auto">
