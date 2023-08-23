@@ -29,4 +29,7 @@ export const userSlice = createSlice({
 export const selectLoggedInUser = (state: RootState) =>
   state.userInfo.user;
 
+  export const selectChattingUser = (state: RootState, chattingUserId: string) =>
+    state.userInfo.usersList.find((user) => user.id === chattingUserId);
+
 export const { actions, reducer } = userSlice;

@@ -64,7 +64,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="h-screen grid place-items-center  bg-indigo-300">
-        {Object.keys(user).length ? (
+        {Object.keys(user).length > 0 ? (
           <Routes>
             <Route path="/" element={<MainPage />} />
             <Route path="/chats/:userId" element={<MainPage />} />
