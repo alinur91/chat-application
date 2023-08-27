@@ -1,5 +1,3 @@
-// import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
-// import { db } from "../firebase";
 import React, { useEffect, useState } from "react";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { IUser } from "../types/InitialUserState";

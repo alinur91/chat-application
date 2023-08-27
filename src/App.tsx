@@ -8,6 +8,7 @@ import { useActions } from "./hooks/useActions";
 import { useEffect } from "react";
 import {
   DocumentData,
+  Unsubscribe,
   collection,
   doc,
   onSnapshot,
@@ -41,8 +42,9 @@ function App() {
   };
 
   useEffect(() => {
+    let unsubscribe: Unsubscribe;
     if (Object.keys(user).length !== 0) {
-      const unsubscribe = onSnapshot(
+      unsubscribe = onSnapshot(
         collection(db, "users"),
         (snapshot) => {
           const users: DocumentData[] = [];
@@ -59,6 +61,7 @@ function App() {
         }
       );
     }
+    () => unsubscribe();
   }, [setUsersList, user]);
 
   return (

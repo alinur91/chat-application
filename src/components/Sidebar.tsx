@@ -23,22 +23,6 @@ const Sidebar = () => {
     );
     await setDoc(userRef, chattingWithUser, { merge: false });
     setshouldClearInput(false);
-
-    // const roomsRef = collection(db, "rooms");
-    // const q1 = query(roomsRef, where("id", "==", chattingWithUser.id));
-    // const doesUserExist = await getDocs(q1);
-
-    // if (doesUserExist.docs.length === 0) {
-    //   setshouldClearInput(true);
-    //   await addDoc(collection(db, "rooms"), {
-    //     id: chattingWithUser.id,
-    //     name: chattingWithUser.name,
-    //     photo: chattingWithUser.photo,
-    //     email: chattingWithUser.email,
-    //     myAccountId: user.id,
-    //   });
-    //   setshouldClearInput(false);
-    // }
   };
 
   useEffect(() => {
@@ -50,9 +34,22 @@ const Sidebar = () => {
         data.docs.forEach((doc) => {
           listOfChattingUsers.push(doc.data() as IUser);
         });
-        console.log(listOfChattingUsers);
-
         setChattingUsersList(listOfChattingUsers.reverse());
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user.email, user.id]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, "rooms", user.id, "messages"),
+      (data) => {
+        const listOfChattingUsers = [] as IUser[];
+
+        data.docs.forEach((doc) => {
+          listOfChattingUsers.push(doc.data() as IUser);
+        });
       }
     );
 

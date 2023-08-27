@@ -4,15 +4,17 @@ import { useActions } from "../hooks/useActions";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { selectLoggedInUser } from "../store/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const SidebarHead = () => {
   const user = useTypedSelector(selectLoggedInUser);
   const { removeUser } = useActions();
-
+  const navigate = useNavigate()
   const handleSignOut = () => {
     removeUser();
     signOut(auth).then(()=>{
       localStorage.removeItem('user')
+      navigate('/')
     })
   };
 

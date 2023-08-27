@@ -1,14 +1,64 @@
 import { IoMdAttach } from "react-icons/io";
 import { AiOutlinePicture } from "react-icons/ai";
 import { useState } from "react";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  or,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "../firebase";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { v4 as uuidv4 } from "uuid";
 
-const ChatInput = () => {
+const ChatInput = ({ userId }: { userId: string }) => {
   const [message, setmessage] = useState("");
+  const user = useTypedSelector((state) => state.userInfo.user);
 
-  const handleSubmitMessage = (e: { preventDefault: () => void; }) => {
+  const handleSubmitMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(message);
-    
+
+    const roomsRef = collection(db, "rooms");
+    const q = query(
+      roomsRef,
+      or(
+        where("name", "==", userId + user.id),
+        where("name", "==", user.id + userId)
+      )
+    );
+    const combinedId = user.id > userId ? user.id + userId : userId + user.id;
+
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((document) => {
+      if (document.id) {
+        addDoc(collection(db, "rooms", document.id, "messages"), {
+          id: uuidv4(),
+          name: user.name,
+          message,
+          photo: user.photo,
+        });
+      }
+    });
+
+    if (querySnapshot.docs.length === 0) {
+      await addDoc(collection(db, "rooms", combinedId, "messages"), {
+        id: uuidv4(),
+        name: user.name,
+        message,
+        photo: user.photo,
+      });
+
+      await setDoc(doc(db, "rooms", combinedId), {
+        name: userId + user.id,
+      });
+    }
+
+    setmessage("");
   };
 
   return (
