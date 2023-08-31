@@ -4,11 +4,16 @@ export interface IUser {
   email: string;
   photo: string;
   myAccountId?: string,
-  message?: string
+  message?: string,
+  unreadMessageCount?: number
 }
 
 
 export type InitialUserState = {
   user: IUser;
   usersList: IUser[];
+  activeChattingUsersId: {
+    chattingUserId: string;
+    sendingUser: IUser
+  };
 };

@@ -5,13 +5,19 @@ import ChatSectionHeader from "./ChatSectionHeader";
 import Chats from "./Chats";
 import ChatInput from "./ChatInput";
 import { Audio } from "react-loader-spinner";
+import { useState } from "react";
 
 const ChatsSection = () => {
   const { userId } = useParams();
+  const [scrollToBottomOfDiv, setscrollToBottomOfDiv] = useState(false)
 
   const chattingUser = useTypedSelector((state) =>
     selectChattingUser(state, userId!)
   );
+
+  const shouldScrollToBottomOfDiv = (value: boolean)=>{
+    setscrollToBottomOfDiv(value)
+  }
 
   let content;
 
@@ -32,8 +38,15 @@ const ChatsSection = () => {
       content = (
         <div className="flex flex-col">
           <ChatSectionHeader chattingUser={chattingUser!} />
-          <Chats userId={userId} />
-          <ChatInput userId={userId} />
+          <Chats
+            userId={userId}
+            scrollToBottomOfDiv={scrollToBottomOfDiv}
+            shouldScrollToBottomOfDiv={shouldScrollToBottomOfDiv}
+          />
+          <ChatInput
+            chattingUser={chattingUser}
+            shouldScrollToBottomOfDiv={shouldScrollToBottomOfDiv}
+          />
         </div>
       );
     }

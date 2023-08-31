@@ -1,21 +1,28 @@
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import noAvatar from "../assets/no-avatar.png";
 import { useActions } from "../hooks/useActions";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { signOut } from "firebase/auth";
 import { selectLoggedInUser } from "../store/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import { doc, updateDoc } from "firebase/firestore";
 
 const SidebarHead = () => {
   const user = useTypedSelector(selectLoggedInUser);
   const { removeUser } = useActions();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleSignOut = () => {
     removeUser();
-    signOut(auth).then(()=>{
-      localStorage.removeItem('user')
-      navigate('/')
-    })
+    signOut(auth).then(() => {
+      localStorage.removeItem("user");
+      localStorage.removeItem("activeChattingUsersId");
+      const currentUserRef = doc(db, "usersChat", user.email);
+      updateDoc(currentUserRef, {
+        chattingUserId: "",
+        sendingUser: "",
+      });
+      navigate("/");
+    });
   };
 
   return (
@@ -29,7 +36,7 @@ const SidebarHead = () => {
         />
         <span>{user.name.substring(0, 10)} </span>
         <button onClick={handleSignOut} className="bg-indigo-400 p-1">
-          Sign Out
+          Log Out
         </button>
       </div>
     </div>

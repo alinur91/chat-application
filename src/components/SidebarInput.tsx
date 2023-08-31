@@ -31,13 +31,13 @@ const SidebarInput = ({
   return (
     <div className="border-solid border-b border-gray-500 text-gray-100">
       <input
+        autoFocus
         value={text}
         onChange={hanldeTextChange}
         className="w-full outline-none p-2 bg-indigo-800 placeholder-gray-300"
         type="text"
-        placeholder="Find a user"
+        placeholder="Type a google name"
       />
-      {/* <hr /> */}
     </div>
   );
 };

@@ -66,7 +66,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="h-screen grid place-items-center  bg-indigo-300">
+      <div className="min-h-screen   grid place-items-center  bg-indigo-300">
         {Object.keys(user).length > 0 ? (
           <Routes>
             <Route path="/" element={<MainPage />} />
