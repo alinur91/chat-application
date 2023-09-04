@@ -1,4 +1,10 @@
-import { DocumentData, collection, onSnapshot } from "firebase/firestore";
+import {
+  DocumentData,
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { useEffect, useState, useRef } from "react";
 import { db } from "../firebase";
 import { IUser } from "../types/InitialUserState";
@@ -6,7 +12,6 @@ import { useTypedSelector } from "../hooks/useTypedSelector";
 
 const Chats = ({
   userId,
-  scrollToBottomOfDiv,
   shouldScrollToBottomOfDiv,
 }: {
   userId: string;
@@ -23,30 +28,36 @@ const Chats = ({
   }, [userId]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(
+    const q = query(
       collection(db, "rooms", combinedId, "messages"),
-      (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            setchatMessages((message) => [
-              ...message,
-              change.doc.data() as IUser,
-            ]);
-          }
-        });
-      }
+      orderBy("createdAt")
     );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "modified") {
+          setchatMessages((messages) => [...messages, change.doc.data()]);
+        }
+        if (change.type === "added") {
+          setchatMessages((messages) => {
+            if (change.doc.data().createdAt)
+              return [...messages, change.doc.data() as IUser];
+
+            return messages;
+          });
+        }
+      });
+    });
 
     return () => unsubscribe();
   }, [combinedId, user.id, userId]);
 
   const getTextClasses = (
     currentUserEmail: string,
-    textedUserEmail: string
+    textedUser: DocumentData
   ) => {
-    /* max-w-[80%] */
-    let textClass = ` px-5 py-3 text-lg `;
-    if (currentUserEmail === textedUserEmail) {
+    let textClass = `relative px-5 py-3 pr-28 text-lgm  `;
+    if (currentUserEmail === textedUser.email) {
       textClass += `text-white bg-blue-500 rounded-tl-xl rounded-bl-xl rounded-br-xl`;
     } else {
       textClass += `text-gray-600 bg-white font-semibold  rounded-tr-xl rounded-bl-xl rounded-br-xl`;
@@ -59,14 +70,36 @@ const Chats = ({
     currentUserEmail: string,
     textedUserEmail: string
   ) => {
-    let messageInfoClass = `flex items-center gap-`;
+    let messageInfoClass = `flex items-center `;
     if (currentUserEmail === textedUserEmail) {
-      messageInfoClass += `5 self-end`;
+      messageInfoClass += `gap-5 self-end`;
     } else {
-      messageInfoClass += `8`;
+      messageInfoClass += `gap-6`;
     }
 
     return messageInfoClass;
+  };
+
+  const getTimeStampMessage = (
+    currentUserEmail: string,
+    textedUser: DocumentData
+  ) => {
+    const uneditedDate = new Date(textedUser.createdAt?.seconds * 1000);
+    const date = uneditedDate.toLocaleDateString();
+    const hours = uneditedDate.getHours();
+    const minutes = uneditedDate.getMinutes();
+    const messageColor =
+      currentUserEmail === textedUser.email
+        ? "text-slate-200"
+        : "text-slate-400";
+    const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+    const fullDate = `${date}, ${hours}:${formattedMinutes}`;
+
+    return (
+      <span className={`absolute text-xs bottom-2 right-2 ${messageColor}`}>
+        {fullDate}{" "}
+      </span>
+    );
   };
 
   const renderMessageInfo = (
@@ -82,9 +115,9 @@ const Chats = ({
       />,
       <span
         key="1"
-        className={`${getTextClasses(currentUserEmail, textedUser.email)}`}
+        className={`${getTextClasses(currentUserEmail, textedUser)}`}
       >
-        {textedUser.message}{" "}
+        {textedUser.message} {getTimeStampMessage(currentUserEmail, textedUser)}
       </span>,
     ];
 
@@ -99,21 +132,11 @@ const Chats = ({
   };
 
   useEffect(() => {
-    if (scrollToBottomOfDiv) {
-      // scrollRef.current?.scrollIntoView({
-      //   behavior: "smooth",
-      // }),
-      setTimeout(
-        () =>
-          scrollRef.current?.scrollIntoView({
-            behavior: "smooth",
-            block: 'end'
-          }),
-        100
-      );
+    scrollRef.current?.scrollIntoView({
+      behavior: "smooth",
+    }),
       shouldScrollToBottomOfDiv(false);
-    }
-  }, [scrollToBottomOfDiv, shouldScrollToBottomOfDiv]);
+  }, [shouldScrollToBottomOfDiv]);
 
   return (
     <div className="flex flex-col items-start gap-5 p-4 bg-indigo-100 h-[593.19px] overflow-auto">

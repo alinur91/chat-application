@@ -11,6 +11,7 @@ import {
   getDocs,
   or,
   query,
+  serverTimestamp,
   setDoc,
   where,
 } from "firebase/firestore";
@@ -63,12 +64,13 @@ const ChatInput = ({
           name: user.name,
           email: user.email,
           message: message.trim(),
+          createdAt: serverTimestamp(),
           photo: user.photo,
         }).then(() => {
           getDoc(userRef).then((docSnapshot) => {
+            shouldScrollToBottomOfDiv(true);
             if (docSnapshot.exists()) {
               const docRef = doc(db, "usersChat", chattingUser.email);
-              // shouldScrollToBottomOfDiv(true);
 
               getDoc(docRef).then((docSnap) => {
                 if (docSnap.exists()) {
@@ -114,17 +116,16 @@ const ChatInput = ({
         name: user.name,
         email: user.email,
         message: message.trim(),
+        createdAt: serverTimestamp(),
         photo: user.photo,
       });
-    // shouldScrollToBottomOfDiv(true);
+      shouldScrollToBottomOfDiv(true);
 
       await setDoc(doc(db, "rooms", combinedId), {
         name: chattingUser.id + user.id,
       });
     }
-
     setmessage("");
-    shouldScrollToBottomOfDiv(true);
   };
 
   const setUnreadMessageCountToOne = async (
@@ -175,7 +176,7 @@ const ChatInput = ({
           <button
             disabled={textIsEmpty}
             className={`px-3 py-2 bg-indigo-${
-              textIsEmpty ? `200` : `400`
+              textIsEmpty ? `400` : `600`
             } text-white`}
           >
             Send
