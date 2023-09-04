@@ -13,6 +13,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { db } from "../firebase";
@@ -87,6 +88,7 @@ const ChatInput = ({
                 } else {
                   increaseUnreadMessageCount(userRef, user, docSnapshot.data());
                 }
+                updateDoc(userRef, { latestMessage: message.trim() });
               });
             } else {
               alert("No such document!");
@@ -110,6 +112,8 @@ const ChatInput = ({
           setUnreadMessageCountToOne(userRef, user);
         }
       });
+
+      await updateDoc(userRef, { latestMessage: message.trim() });
 
       await addDoc(collection(db, "rooms", combinedId, "messages"), {
         id: uuidv4(),

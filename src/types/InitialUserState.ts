@@ -3,9 +3,10 @@ export interface IUser {
   name: string;
   email: string;
   photo: string;
-  myAccountId?: string,
-  message?: string,
-  unreadMessageCount?: number
+  myAccountId?: string;
+  message?: string;
+  unreadMessageCount?: number;
+  latestMessage?: string;
 }
 
 

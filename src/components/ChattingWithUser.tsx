@@ -41,6 +41,14 @@ const ChattingWithUser = ({
     localStorage.setItem("activeChattingUsersId", JSON.stringify(usersObjInfo));
   };
 
+  const getLatestMessage = (latestMessage: string) => {
+    if (latestMessage.length >= 25) {
+      latestMessage = latestMessage.substring(0, 26) + "...";
+    }
+    
+    return <p>{latestMessage}</p>;
+  };
+
   return (
     <div
       className={`flex  text-gray-200 p-2 cursor-pointer justify-between items-center ${
@@ -56,9 +64,10 @@ const ChattingWithUser = ({
           src={chattingWithUser.photo}
           alt=""
         />
-        <div>
+        <div className="self-center">
           <h4>{chattingWithUser.name}</h4>
-          <p>message</p>
+          {chattingWithUser.latestMessage &&
+            getLatestMessage(chattingWithUser.latestMessage)}
         </div>
       </div>
       {chattingWithUser.unreadMessageCount &&
