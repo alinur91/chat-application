@@ -26,26 +26,30 @@ const ChattingWithUser = ({
       "chattingUsersList",
       chattingWithUser.email
     );
+
     const usersObjInfo = {
       chattingUserId: chattingWithUser.id,
       sendingUser: user,
     };
+
     const currentUserRef = doc(db, "usersChat", user.email);
     setDoc(currentUserRef, usersObjInfo, { merge: true });
     updateDoc(chattingUserRef, {
       unreadMessageCount: null,
     });
-
     navigate(`/chats/${chattingWithUser.id}`);
     setActiveChattingUsersId(usersObjInfo);
-    localStorage.setItem("activeChattingUsersId", JSON.stringify(usersObjInfo));
+    localStorage.setItem(
+      "activeChattingUsersId",
+      JSON.stringify(usersObjInfo)
+    );
   };
 
   const getLatestMessage = (latestMessage: string) => {
-    if (latestMessage.length >= 25) {
-      latestMessage = latestMessage.substring(0, 26) + "...";
+    if (latestMessage.length >= 30) {
+      latestMessage = latestMessage.substring(0, 31) + "...";
     }
-    
+
     return <p>{latestMessage}</p>;
   };
 
