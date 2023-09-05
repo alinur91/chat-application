@@ -55,7 +55,7 @@ const Sidebar = () => {
         data.docs.forEach((doc) => {
           listOfChattingUsers.push(doc.data() as IUser);
         });
-        setChattingUsersList(listOfChattingUsers.reverse());
+        setChattingUsersList(listOfChattingUsers);
       }
     );
 

@@ -87,7 +87,11 @@ const ChatInput = ({
                 } else {
                   increaseUnreadMessageCount(userRef, user, docSnapshot.data());
                 }
-                setDoc(userRef, {...user, latestMessage: message.trim() },{ merge: true });
+                setDoc(
+                  userRef,
+                  { ...user, latestMessage: message.trim() },
+                  { merge: true }
+                );
               });
             } else {
               alert("No such document!");
@@ -112,7 +116,11 @@ const ChatInput = ({
         }
       });
 
-      await setDoc(userRef, {...user, latestMessage: message.trim() },{ merge: true });
+      await setDoc(
+        userRef,
+        { ...user, latestMessage: message.trim() },
+        { merge: true }
+      );
 
       await addDoc(collection(db, "rooms", combinedId, "messages"), {
         id: uuidv4(),
@@ -177,6 +185,7 @@ const ChatInput = ({
           type="text"
           className="w-full h-full outline-none px-3 text-xl text-gray-600"
         />
+
         <div className="flex items-center gap-2 absolute top-3 right-3 text-xl text-gray-400">
           <IoMdAttach className="cursor-pointer" />
           <AiOutlinePicture className="cursor-pointer" />

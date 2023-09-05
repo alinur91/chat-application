@@ -54,7 +54,7 @@ const ChatsSection = () => {
   };
 
   return (
-    <div className="bg- flex-1 rounded-tr-lg bg-gray-100 rounded-br-lg ">
+    <div className="flex-1 rounded-tr-lg bg-gray-100 rounded-br-lg ">
       {renderContent(content)}
     </div>
   );

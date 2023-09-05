@@ -39,15 +39,12 @@ const ChattingWithUser = ({
     });
     navigate(`/chats/${chattingWithUser.id}`);
     setActiveChattingUsersId(usersObjInfo);
-    localStorage.setItem(
-      "activeChattingUsersId",
-      JSON.stringify(usersObjInfo)
-    );
+    localStorage.setItem("activeChattingUsersId", JSON.stringify(usersObjInfo));
   };
 
   const getLatestMessage = (latestMessage: string) => {
-    if (latestMessage.length >= 30) {
-      latestMessage = latestMessage.substring(0, 31) + "...";
+    if (latestMessage.length >= 25) {
+      latestMessage = latestMessage.substring(0, 26) + "...";
     }
 
     return <p>{latestMessage}</p>;
@@ -55,7 +52,7 @@ const ChattingWithUser = ({
 
   return (
     <div
-      className={`flex  text-gray-200 p-2 cursor-pointer justify-between items-center ${
+      className={`flex text-gray-200 p-2 cursor-pointer justify-between items-center ${
         sendingUser?.id === user.id &&
         chattingWithUser.id === chattingUserId &&
         `bg-indigo-400 text-white`

@@ -56,7 +56,7 @@ const Chats = ({
     currentUserEmail: string,
     textedUser: DocumentData
   ) => {
-    let textClass = `relative px-5 py-3 pr-28 text-lgm  `;
+    let textClass = `relative px-5 py-3 pr-28 text-lgm break-all `;
     if (currentUserEmail === textedUser.email) {
       textClass += `text-white bg-blue-500 rounded-tl-xl rounded-bl-xl rounded-br-xl`;
     } else {
