@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { IUser } from "../types/InitialUserState";
 import { db } from "../firebase";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
@@ -12,7 +11,6 @@ const ChattingWithUser = ({
   chattingWithUser: IUser;
   user: IUser;
 }) => {
-  const navigate = useNavigate();
   const { setActiveChattingUsersId } = useActions();
   const { chattingUserId, sendingUser } = useTypedSelector(
     (state) => state.userInfo.activeChattingUsersId
@@ -37,7 +35,7 @@ const ChattingWithUser = ({
     updateDoc(chattingUserRef, {
       unreadMessageCount: null,
     });
-    navigate(`/chats/${chattingWithUser.id}`);
+
     setActiveChattingUsersId(usersObjInfo);
     localStorage.setItem("activeChattingUsersId", JSON.stringify(usersObjInfo));
   };

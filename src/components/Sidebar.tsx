@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { db } from "../firebase";
 import ChattingWithUser from "./ChattingWithUser";
 import { useTypedSelector } from "../hooks/useTypedSelector";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useActions } from "../hooks/useActions";
 
 const Sidebar = () => {
@@ -63,20 +63,23 @@ const Sidebar = () => {
   }, [user.email, user.id]);
 
   return (
-    <div className="bg-indigo-800 rounded-tl-lg rounded-bl-lg  w-4/12 overflow-auto">
-      <SidebarHead />
-      <SidebarInput
-        addUserToChattingList={addUserToChattingList}
-        shouldClearInput={shouldClearInput}
-      />
-      {chattingUsersList.map((chattingWithUser) => (
-        <ChattingWithUser
-          key={chattingWithUser.id}
-          chattingWithUser={chattingWithUser}
-          user={user}
+    <>
+      <div className="bg-indigo-800 rounded-tl-lg rounded-bl-lg  w-4/12 overflow-auto">
+        <SidebarHead />
+        <SidebarInput
+          addUserToChattingList={addUserToChattingList}
+          shouldClearInput={shouldClearInput}
         />
-      ))}
-    </div>
+        {chattingUsersList.map((chattingWithUser) => (
+          <ChattingWithUser
+            key={chattingWithUser.id}
+            chattingWithUser={chattingWithUser}
+            user={user}
+          />
+        ))}
+      </div>
+      <Outlet />
+    </>
   );
 };
 
