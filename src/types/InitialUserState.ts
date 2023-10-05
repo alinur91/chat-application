@@ -13,8 +13,9 @@ export interface IUser {
 export type InitialUserState = {
   user: IUser;
   usersList: IUser[];
+  currentUsersChattingList: IUser[];
   activeChattingUsersId: {
     chattingUserId: string;
-    sendingUser: IUser
+    sendingUser: IUser;
   };
 };

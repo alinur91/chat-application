@@ -8,11 +8,11 @@ const activeChattingUsersId = localStorage.getItem("activeChattingUsersId");
 const initialState: InitialUserState = {
   user: user !== null ? JSON.parse(user) : ({} as IUser),
   usersList: [] as IUser[],
+  currentUsersChattingList: [] as IUser[],
   activeChattingUsersId:
     activeChattingUsersId !== null
       ? JSON.parse(activeChattingUsersId)
       : { chattingUserId: "", sendingUser: {} as IUser },
-  // activeChattingUsersId: { chattingUserId: "", sendingUser: {} as IUser }
 };
 
 export const userSlice = createSlice({
@@ -25,6 +25,7 @@ export const userSlice = createSlice({
     removeUser(state) {
       state.user = {} as IUser;
       state.usersList = [] as IUser[];
+      state.currentUsersChattingList = [] as IUser[];
       state.activeChattingUsersId = {
         chattingUserId: "",
         sendingUser: {} as IUser,
@@ -32,6 +33,9 @@ export const userSlice = createSlice({
     },
     setUsersList(state, action) {
       state.usersList = action.payload;
+    },
+    setCurrentUsersChattingList(state, action) {
+      state.currentUsersChattingList = action.payload;
     },
     setActiveChattingUsersId(state, action) {
       state.activeChattingUsersId = action.payload;

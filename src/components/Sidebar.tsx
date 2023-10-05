@@ -10,11 +10,13 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useActions } from "../hooks/useActions";
 
 const Sidebar = () => {
-  const [chattingUsersList, setChattingUsersList] = useState<IUser[]>([]);
   const [shouldClearInput, setshouldClearInput] = useState(false);
   const user = useTypedSelector((state) => state.userInfo.user);
+  const currentUsersChattingList = useTypedSelector(
+    (state) => state.userInfo.currentUsersChattingList
+  );
   const navigate = useNavigate();
-  const { setActiveChattingUsersId } = useActions();
+  const { setActiveChattingUsersId ,setCurrentUsersChattingList} = useActions();
 
   const addUserToChattingList = async (chattingWithUser: IUser) => {
     setshouldClearInput(true);
@@ -43,7 +45,6 @@ const Sidebar = () => {
     );
     await setDoc(userRef, chattingWithUser, { merge: false });
     setshouldClearInput(false);
-    navigate(`/chats/${chattingWithUser.id}`);
   };
 
   useEffect(() => {
@@ -55,12 +56,12 @@ const Sidebar = () => {
         data.docs.forEach((doc) => {
           listOfChattingUsers.push(doc.data() as IUser);
         });
-        setChattingUsersList(listOfChattingUsers);
+        setCurrentUsersChattingList(listOfChattingUsers);
       }
     );
 
     return () => unsubscribe();
-  }, [user.email, user.id]);
+  }, [setCurrentUsersChattingList, user.email, user.id]);
 
   return (
     <>
@@ -70,7 +71,7 @@ const Sidebar = () => {
           addUserToChattingList={addUserToChattingList}
           shouldClearInput={shouldClearInput}
         />
-        {chattingUsersList.map((chattingWithUser) => (
+        {currentUsersChattingList.map((chattingWithUser) => (
           <ChattingWithUser
             key={chattingWithUser.id}
             chattingWithUser={chattingWithUser}
