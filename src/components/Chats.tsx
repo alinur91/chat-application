@@ -136,7 +136,7 @@ const Chats = ({
       behavior: "smooth",
     }),
       shouldScrollToBottomOfDiv(false);
-  }, [shouldScrollToBottomOfDiv]);
+  });
 
   return (
     <div className="flex flex-col items-start gap-5 p-4 bg-indigo-100 h-[593.19px] overflow-auto">
