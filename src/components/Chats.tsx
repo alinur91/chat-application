@@ -132,6 +132,7 @@ const Chats = ({
   };
 
   useEffect(() => {
+    /* scroll happens  happens as soon as the page is loaded, thats why we removed array of dependencyi [] */
     scrollRef.current?.scrollIntoView({
       behavior: "smooth",
     }),
